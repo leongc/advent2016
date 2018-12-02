@@ -49,9 +49,9 @@ function distance(s) {
   for (var i = 0; i < steps.length; i++) {
     var step = steps[i];
     var direction = step.substring(0, 1);
-    var distance = parseInt(step.substring(1));
+    var blocks = parseInt(step.substring(1));
     heading = turns[heading + direction];
-    go(distance);
+    go(blocks);
   }
   // console.log(x + ", " + y);
   return Math.abs(x) + Math.abs(y);
@@ -61,3 +61,51 @@ console.assert(distance("R2, L3") == 5, "leaves you 2 blocks East and 3 blocks N
 console.assert(distance("R2, R2, R2") == 2, "leaves you 2 blocks due South of your starting position, which is 2 blocks away");
 console.assert(distance("R5, L5, R5, R3") == 12, "12 blocks away");
 console.log(distance(input));
+
+/*
+--- Part Two ---
+Then, you notice the instructions continue on the back of the Recruiting Document. Easter Bunny HQ is actually at the first location you visit twice.
+
+For example, if your instructions are R8, R4, R4, R8, the first location you visit twice is 4 blocks away, due East.
+
+How many blocks away is the first location you visit twice?
+*/
+
+function revisit(s) {
+  var x = 0;
+  var y = 0;
+  var heading = "N";
+  var visited = new Set();
+  visited.add("0,0");
+  // @returns false to stop, otherwise keep going
+  function go(blocks) {
+    for (var i = 0; i < blocks; i++) {
+      switch (heading) {
+        case "N": y++; break;
+        case "E": x++; break;
+        case "S": y--; break;
+        case "W": x--; break;
+      }
+      var loc = x + "," + y;
+      // console.log("visited " + loc);
+      if (visited.has(loc)) {
+        return false;
+      }
+      visited.add(loc);
+    }
+    return true;
+  }
+  var steps = s.split(", ");
+  for (var i = 0; i < steps.length; i++) {
+    var step = steps[i];
+    var direction = step.substring(0, 1);
+    var blocks = parseInt(step.substring(1));
+    heading = turns[heading + direction];
+    if (!go(blocks)) {
+      return Math.abs(x) + Math.abs(y);
+    }
+  }
+  return -1;
+}
+console.assert(revisit("R8, R4, R4, R8") == 4, "the first location you visit twice is 4 blocks away, due East.");
+console.log(revisit(input));
