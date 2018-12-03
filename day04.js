@@ -1058,3 +1058,46 @@ for (let s of input) {
   sectorSum += getRealSectorId(s);
 }
 console.log(sectorSum);
+
+/*
+--- Part Two ---
+With all the decoy data out of the way, it's time to decrypt this list and get moving.
+
+The room names are encrypted by a state-of-the-art shift cipher, which is nearly unbreakable without the right software. However, the information kiosk designers at Easter Bunny HQ were not expecting to deal with a master cryptographer like yourself.
+
+To decrypt a room name, rotate each letter forward through the alphabet a number of times equal to the room's sector ID. A becomes B, B becomes C, Z becomes A, and so on. Dashes become spaces.
+
+For example, the real name for qzmt-zixmtkozy-ivhz-343 is very encrypted name.
+
+What is the sector ID of the room where North Pole objects are stored?
+*/
+function printDecryptedReal(s) {
+  var encryptedName;
+  var sectorId;
+  var sum;
+  [encryptedName, sectorId, sum] = s.split(/(\d+)/, 3);
+  var computedSum = checksum(getLetterFreq(encryptedName));
+  if (computedSum == sum.substring(1,6)) {
+    var decrypted = decrypt(encryptedName, parseInt(sectorId));
+    if (decrypted.indexOf("north") >= 0) {
+      console.log(sectorId + " = " + decrypted);
+    }
+  }
+}
+var aCharCode = 'a'.charCodeAt(0);
+function decrypt(encrypted, sectorId) {
+  var result = "";
+  for (let c of encrypted) {
+    if (c < 'a' || c > 'z') {
+      result += c;
+      continue;
+    }
+    var i = ((c.charCodeAt(0) - aCharCode + sectorId) % 26) + aCharCode;
+    result += String.fromCharCode(i);
+  }
+  return result;
+}
+console.assert(decrypt("qzmt-zixmtkozy-ivhz-", 343) == "very-encrypted-name-", "decrypt failed");
+for (let s of input) {
+  printDecryptedReal(s);
+}
