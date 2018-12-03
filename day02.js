@@ -32,37 +32,73 @@ var input = [ "DLRRRRLRLDRRRURRURULRLLULUURRRDDLDULDULLUUDLURLURLLDLUUUDUUUULDRD
 ,"RRRLRDLLDUURDRRRLURDUULUDURDRRUUDURURRLDLLDRDLRRURDDUDDURLRUUDDULULRUUDRLUUDDLLDDDLRRRDLLLLLLRRURDULDLURRURRDDLDDDUDURRDURRRLUDRRULLRULDRLULRULDDRLLRDLRDUURULURLUURLRRULDULULUULDUDLRLDRDDRRRUUULULDUURLRLLURRLURDUUDDDRUULDLLLDRUURLRRLLDDUDRDLDDDULDRDDDUDRRLLLULURDUDLLUUURRLDULURURDDLUDLLRLDRULULURDLDRLURDLRRDRRUULLULDLURRDDUDRDDDLDUDLDRRUDRULDLDULRLLRRRRDDRLUURRRRDDLLRUURRLRURULDDULRLULRURRUULDUUDURDRRLRLUDRULDRUULUUDRDURDURRLULDDDULDDLRDURRUUUUUDDRRDLRDULUUDDL"
 ,"DRRLLRRLULDDULRDDLRLDRURDDUDULURRDLUUULURRRLLRLULURLLRLLDLLUDDLLRDRURRDLDDURRURDRDDUDDDLLRLDLDLDDDDRRRRUDUDLRDUDDURLLRURRDUDLRLLUDDRLDUUDDLLLUDRRRLLDDULUDDRLLUDDULLDDLRLDLRURRLUDDLULULDLUURDLLUDUDRRRRDULUDLRRLRUDDUUDRRLLRUUDRRLDDLRRRUDRRDRRDDUDLULLURRUURLLLDRDDLUDDDUDDRURURDLRUULLRDRUUDRDUDRLULLDURUUULDDLDRDRUDRUDUULDDRLRDRRDRRRRLRLRUULDDUUDDLLLLRRRDUDLRDLDUDDUURLUDURLDRRRDRUDUDRLDLRLDRDDLUDRURLRDRDLDUDDDLRLULLUULURLDDDULDUDDDLDRLDLURULLUDLLDRULDLLLDUL"
 ,"LDULURUULLUDLDDRLLDURRULRLURLLURLRRLRDLDDRUURULLRUURUURRUDDDLRRLDDLULDURLLRDURDLLLURLDRULLURLRLDRDRULURDULDLLDUULLLDUDULDURLUDRULRUUUUUUDUUDDDLLURDLDLRLRDLULRDRULUUDRLULLURLRLDURDRRDUDDDURLLUUDRRURUDLDUDRLRLDRLLLLDLLLURRUDDURLDDRULLRRRRDUULDLUDLDRDUUURLDLLLDLRLRRLDDULLRURRRULDLURLURRRRULUURLLUULRURDURURLRRDULLDULLUDURDUDRLUULULDRRDLLDRDRRULLLDDDRDUDLRDLRDDURRLDUDLLRUDRRRUDRURURRRRDRDDRULRRLLDDRRRLDLULRLRRRUDUDULRDLUDRULRRRRLUULRULRLLRLLURDLUURDULRLDLRLURDUURUULUUDRLLUDRULULULLLLRLDLLLDDDLUULUDLLLDDULRDRULURDLLRRDRLUDRD"];
-var pad = ["123","456","789"];
+var pad1 = ["123","456","789"];
 var x = 1;
 var y = 1;
-function readLine(s) {
+function readLine(s, pad) {
   for (var i = 0; i < s.length; i++) {
-    go(s[i]);
+    go(s[i], pad);
   }
   return pad[y][x];
 }
-function go(dir) {
+function go(dir, pad) {
   switch (dir) {
     case "U":
-      if (y > 0) { y--; }
+      if ((y > 0) && pad[y-1][x] !== undefined) { y--; }
       break;
     case "D":
-      if (y < (pad.length - 1)) { y++; }
+      if ((y < pad.length - 1) && pad[y+1][x] !== undefined) { y++; }
       break;
     case "L":
-      if (x > 0) { x--; }
+      if (pad[y][x-1] !== undefined) { x--; }
       break;
     case "R":
-      if (x < (pad[y].length - 1)) { x++; }
+      if (pad[y][x+1] !== undefined) { x++; }
       break;
   }
 }
-console.assert(readLine("ULL") == "1", "You start at 5 and move up (to 2), left (to 1), and left (you can't, and stay on 1), so the first button is 1.");
-console.assert(readLine("RRDDD") == "9", "Starting from the previous button (1), you move right twice (to 3) and then down three times (stopping at 9 after two moves and ignoring the third), ending up with 9.");
-console.assert(readLine("LURDL") == "8", "Continuing from 9, you move left, up, right, down, and left, ending with 8.");
-console.assert(readLine("UUUUD") == "5", "Finally, you move up four times (stopping at 2), then down once, ending with 5.");
+console.assert(readLine("ULL", pad1) == "1", "You start at 5 and move up (to 2), left (to 1), and left (you can't, and stay on 1), so the first button is 1.");
+console.assert(readLine("RRDDD", pad1) == "9", "Starting from the previous button (1), you move right twice (to 3) and then down three times (stopping at 9 after two moves and ignoring the third), ending up with 9.");
+console.assert(readLine("LURDL", pad1) == "8", "Continuing from 9, you move left, up, right, down, and left, ending with 8.");
+console.assert(readLine("UUUUD", pad1) == "5", "Finally, you move up four times (stopping at 2), then down once, ending with 5.");
 
 x = 1; y = 1;
 for (var i = 0; i < input.length; i++) {
-  console.log(readLine(input[i]));
+  console.log(readLine(input[i], pad1));
+}
+
+/*
+--- Part Two ---
+You finally arrive at the bathroom (it's a several minute walk from the lobby so visitors can behold the many fancy conference rooms and water coolers on this floor) and go to punch in the code. Much to your bladder's dismay, the keypad is not at all like you imagined it. Instead, you are confronted with the result of hundreds of man-hours of bathroom-keypad-design meetings:
+
+    1
+  2 3 4
+5 6 7 8 9
+  A B C
+    D
+You still start at "5" and stop when you're at an edge, but given the same instructions as above, the outcome is very different:
+
+You start at "5" and don't move at all (up and left are both edges), ending at 5.
+Continuing from "5", you move right twice and down three times (through "6", "7", "B", "D", "D"), ending at D.
+Then, from "D", you move five more times (through "D", "B", "C", "C", "B"), ending at B.
+Finally, after five more moves, you end at 3.
+So, given the actual keypad layout, the code would be 5DB3.
+
+Using the same instructions in your puzzle input, what is the correct bathroom code?
+
+*/
+var pad2 = [[ undefined, undefined, "1" ],
+            [ undefined, "2", "3", "4" ],
+            "56789",
+            [ undefined, "A", "B", "C" ],
+            [ undefined, undefined, "D" ]];
+x = 0; y = 2;
+console.assert(readLine("ULL", pad2) == "5", "You start at 5 and don't move at all (up and left are both edges), ending at 5.");
+console.assert(readLine("RRDDD", pad2) == "D", "Continuing from 5, you move right twice and down three times (through 67BDD), ending at D.");
+console.assert(readLine("LURDL", pad2) == "B", "Then, from D, you move five more times (through DBCCB), ending at B.");
+console.assert(readLine("UUUUD", pad2) == "3", "Finally, after five more moves, you end at 3.");
+
+x = 0; y = 2;
+for (var i = 0; i < input.length; i++) {
+  console.log(readLine(input[i], pad2));
 }
