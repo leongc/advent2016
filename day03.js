@@ -1748,8 +1748,12 @@ var input = [
 "  356  902  922"];
 
 function isPossibleTriangle(s) {
-  var sides = s.trim().split(/\s+/).map(function(x) { return parseInt(x); });
-  
+  return isTri(getNumbers(s));
+}
+function getNumbers(s) {
+  return s.trim().split(/\s+/).map(function(x) { return parseInt(x); });
+}
+function isTri(sides) {
   return (sides[0] + sides[1] > sides[2])
     && (sides[0] + sides[2] > sides[1])
     && (sides[1] + sides[2] > sides[0]);
@@ -1764,3 +1768,33 @@ for (var i = 0; i < input.length; i++) {
   }
 }
 console.log(possibleCount);
+
+/*
+--- Part Two ---
+Now that you've helpfully marked up their design documents, it occurs to you that triangles are specified in groups of three vertically. Each set of three numbers in a column specifies a triangle. Rows are unrelated.
+
+For example, given the following specification, numbers with the same hundreds digit would be part of the same triangle:
+
+101 301 501
+102 302 502
+103 303 503
+201 401 601
+202 402 602
+203 403 603
+In your puzzle input, and instead reading by columns, how many of the listed triangles are possible?
+*/
+
+var verticalPossible = 0;
+var i = 0;
+while (i < input.length) {
+  var first = getNumbers(input[i++]);
+  var second = getNumbers(input[i++]);
+  var third = getNumbers(input[i++]);
+  for (var j = 0; j < 3; j++) {
+    if (isTri([first[j], second[j], third[j]])) {
+      verticalPossible++;
+    }
+  }
+}
+console.log(verticalPossible);
+  
