@@ -51,7 +51,7 @@ testFreq.set("a", 3);
 testFreq.set("d", 4);
 console.assert(mostFreq(testFreq) == "d");
 
-function mostCommonMessage(messages) {
+function commonMessage(messages, freqEvaluator) {
   var letterFreqs = [];
   for (var i = 0; i < messages[0].length; i++) {
     letterFreqs[i] = new Map();
@@ -71,12 +71,12 @@ function mostCommonMessage(messages) {
   }
   var result = "";
   for (var i = 0; i < messages[0].length; i++) {
-    result += mostFreq(letterFreqs[i]);
+    result += freqEvaluator(letterFreqs[i]);
   }
   return result;
 }
-console.assert(mostCommonMessage(["teat", "west", "tase"]) == "test");
-console.assert(mostCommonMessage(testInput) == "easter");
+console.assert(commonMessage(["teat", "west", "tase"], mostFreq) == "test");
+console.assert(commonMessage(testInput, mostFreq) == "easter");
 
 var input = [
 "blrqqadw",
@@ -651,4 +651,30 @@ var input = [
 "vejkuvii",
 "uhfrombz",
 "clgrjlys"];
-console.log(mostCommonMessage(input));
+console.log(commonMessage(input, mostFreq));
+
+/*
+--- Part Two ---
+Of course, that would be the message - if you hadn't agreed to use a modified repetition code instead.
+
+In this modified code, the sender instead transmits what looks like random data, but for each character, the character they actually want to send is slightly less likely than the others. Even after signal-jamming noise, you can look at the letter distributions in each column and choose the least common letter to reconstruct the original message.
+
+In the above example, the least common character in the first column is a; in the second, d, and so on. Repeating this process for the remaining characters produces the original message, advent.
+
+Given the recording in your puzzle input and this new decoding methodology, what is the original message that Santa is trying to send?
+*/
+function leastFreq(letterFreq) {
+  var entries = Array.from(letterFreq);
+  entries.sort(function(a, b) {
+    if (a[1] < b[1]) {
+      return -1; // lowest frequency first
+    }
+    if (a[1] > b[1]) {
+      return 1;
+    }
+    return a[0].localeCompare(b[0]);
+  });
+  return entries[0][0];
+}
+console.assert(commonMessage(testInput, leastFreq) == "advent");
+console.log(commonMessage(input, leastFreq));
