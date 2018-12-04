@@ -2075,3 +2075,70 @@ for (let ip of input) {
   }
 }
 console.log(tlsCount);
+
+/*
+--- Part Two ---
+You would also like to know which IPs support SSL (super-secret listening).
+
+An IP supports SSL if it has an Area-Broadcast Accessor, or ABA, anywhere in the supernet sequences (outside any square bracketed sections), and a corresponding Byte Allocation Block, or BAB, anywhere in the hypernet sequences. An ABA is any three-character sequence which consists of the same character twice with a different character between them, such as xyx or aba. A corresponding BAB is the same characters but in reversed positions: yxy and bab, respectively.
+
+For example:
+
+aba[bab]xyz supports SSL (aba outside square brackets with corresponding bab within square brackets).
+xyx[xyx]xyx does not support SSL (xyx, but no corresponding yxy).
+aaa[kek]eke supports SSL (eke in supernet with corresponding kek in hypernet; the aaa sequence is not related, because the interior character must be different).
+zazbz[bzb]cdb supports SSL (zaz has no corresponding aza, but zbz has a corresponding bzb, even though zaz and zbz overlap).
+How many IPs in your puzzle input support SSL?
+*/
+function getAbaSet(sequences) {
+  var result = new Set();
+  for (let seq of sequences) {
+    if (seq.length < 3) { continue; }
+    for (var i = 0; i < seq.length - 2; i++) {
+      if (seq[i] != seq[i+1] && seq[i] == seq[i+2]) {
+        result.add(seq[i] + seq[i+1]);
+      }
+    }
+  }
+  return result;
+}
+var actual = Array.from(getAbaSet(["zazbz", "cdb", "xyxy"])).toString();
+var expected = ["za", "zb", "xy", "yx"].toString();
+console.assert(actual == expected, "expected " + expected + ", but was " + actual);
+
+function hasBab(sequences, aba) {
+  var bab = aba[1] + aba[0] + aba[1];
+  for (let seq of sequences) {
+    if (seq.indexOf(bab) >= 0) {
+      return true;
+    }
+  }
+  return false;
+}
+console.assert(hasBab(["bab"], "ab"));
+console.assert(!hasBab(["bzb"], "za"));
+
+function isSSL(s) {
+  var supernets;
+  var hypernets;
+  [supernets, hypernets] = getSequences(s);
+  var abaSet = getAbaSet(supernets);
+  for (let aba of abaSet) {
+    if (hasBab(hypernets, aba)) {
+      return true;
+    }
+  }  
+  return false;
+}
+console.assert(isSSL("aba[bab]xyz"), "aba outside square brackets with corresponding bab within square brackets");
+console.assert(!isSSL("xyx[xyx]xyx"), "xyx, but no corresponding yxy");
+console.assert(isSSL("aaa[kek]eke"), "eke in supernet with corresponding kek in hypernet; the aaa sequence is not related, because the interior character must be different");
+console.assert(isSSL("zazbz[bzb]cdb"), "zaz has no corresponding aza, but zbz has a corresponding bzb, even though zaz and zbz overlap");
+
+var sslCount = 0;
+for (let ip of input) {
+  if (isSSL(ip)) {
+    sslCount++;
+  }
+}
+console.log(sslCount);
