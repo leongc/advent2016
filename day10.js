@@ -316,3 +316,18 @@ var input = [
 ];
 
 console.log(findBot(parseInput(input), 61, 17).name);
+
+/*
+--- Part Two ---
+What do you get if you multiply together the values of one chip in each of outputs 0, 1, and 2?
+*/
+var destMap = parseInput(input);
+var out0 = destMap.get("output 0").value;
+var out1 = destMap.get("output 1").value;
+var out2 = destMap.get("output 2").value;
+console.log(out0 * out1 * out2);
+
+console.log(Array.from(parseInput(input).values())
+            .filter(b => b.name == "output 0" || b.name == "output 1" || b.name == "output 2")
+            .map(o => o.value)
+            .reduce((acc, cur) => acc * cur, 1));
